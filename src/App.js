@@ -103,11 +103,13 @@ export const App = () => {
           setIsLastStep(action.payload.isLastStep);
         }
         break;
-      case 'close_app':
-        if (assistantRef.current) {
-          assistantRef.current.close();
-        }
-        break
+      case 'delayed_close':
+        setTimeout(() => {
+          if (assistantRef.current) {
+            assistantRef.current.close();
+          }
+        }, 3500); 
+        break;
       default:
         break;
     }
