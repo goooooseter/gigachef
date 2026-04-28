@@ -7,7 +7,7 @@ const initializeAssistant = (getState) => {
   if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
       token: process.env.REACT_APP_TOKEN || '',
-      initPhrase: `Запусти ГигаШеф`,
+      initPhrase: `Включи Гига Шеф`,
       getState,
     });
   }
@@ -103,6 +103,11 @@ export const App = () => {
           setIsLastStep(action.payload.isLastStep);
         }
         break;
+      case 'close_app':
+        if (assistantRef.current) {
+          assistantRef.current.close();
+        }
+        break
       default:
         break;
     }
