@@ -108,7 +108,7 @@ export const App = () => {
           if (assistantRef.current) {
             assistantRef.current.close();
           }
-        }, 3500); 
+        }, 4000); 
         break;
       default:
         break;
