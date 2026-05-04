@@ -19,7 +19,7 @@ export const App = () => {
 
   const [recipeData, setRecipeData] = useState(null);
   const [activeStepIndex, setActiveStepIndex] = useState(-1);
-  const [isLastStep, setIsLastStep] = useState(false); // заготовленный стейт
+  const isLastStep = activeStepIndex === recipeData?.steps?.length - 1;
 
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -74,13 +74,11 @@ export const App = () => {
         setIngredients([]);
         setRecipeData(null);
         setActiveStepIndex(-1);
-        setIsLastStep(false); 
         break;
       case 'start_loading':
         setIsLoading(true);
         setRecipeData(null);
         setActiveStepIndex(-1);
-        setIsLastStep(false); 
         break;
       case 'show_recipe':
         setIsLoading(false);
@@ -91,16 +89,11 @@ export const App = () => {
             steps: action.payload.steps || []
           });
           setActiveStepIndex(-1);
-          setIsLastStep(false);
         }
         break;
       case 'highlight_step':
         if (action.payload?.stepIndex !== undefined) {
           setActiveStepIndex(action.payload.stepIndex);
-        }
-    
-        if (action.payload?.isLastStep !== undefined) {
-          setIsLastStep(action.payload.isLastStep);
         }
         break;
       case 'delayed_close':
@@ -147,7 +140,6 @@ export const App = () => {
   const handleClearClick = () => {
     setIngredients([]);
     setRecipeData(null);
-    setIsLastStep(false);
     assistantRef.current?.sendData({
       action: { action_id: 'UI_CLEAR_INGREDIENTS' }
     });
@@ -159,10 +151,25 @@ export const App = () => {
     });
   };
 
-  const handlePrevStep = () => assistantRef.current?.sendData({ action: { action_id: 'UI_PREV_STEP' } });
-  const handleRepeatStep = () => assistantRef.current?.sendData({ action: { action_id: 'UI_REPEAT_STEP' } });
-  const handleNextStep = () => assistantRef.current?.sendData({ action: { action_id: 'UI_NEXT_STEP' } });
-  
+  const handlePrevStep = () => {
+    if (activeStepIndex === -1) {
+      assistantRef.current?.sendData({ action: { action_id: 'UI_NEXT_STEP' } });
+    } else {
+      assistantRef.current?.sendData({ action: { action_id: 'UI_PREV_STEP' } });
+    }
+  };
+
+  const handleRepeatStep = () => {
+    if (activeStepIndex === -1) {
+      assistantRef.current?.sendData({ action: { action_id: 'UI_NEXT_STEP' } });
+    } else {
+      assistantRef.current?.sendData({ action: { action_id: 'UI_REPEAT_STEP' } });
+    }
+  };
+
+  const handleNextStep = () => {
+    assistantRef.current?.sendData({ action: { action_id: 'UI_NEXT_STEP' } });
+  };
   const handleExitClick = () => {
     assistantRef.current?.sendData({ 
       action: { action_id: 'UI_EXIT' } 
