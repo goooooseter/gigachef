@@ -114,14 +114,13 @@ export const App = () => {
       
       if (!ingredients.includes(val)) {
         setIngredients([...ingredients, val]);
-        
-        assistantRef.current?.sendData({
+      }
+      assistantRef.current?.sendData({
           action: {
             action_id: 'UI_ADD_INGREDIENT',
             parameters: { ingredient: val }
           }
         });
-      }
       setInputValue('');
     }
   };
